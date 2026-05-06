@@ -87,17 +87,27 @@ int main(void)
 
   /* Initialize all configured peripherals */
   /* USER CODE BEGIN 2 */
+  LPUART_ESC_Print("2J");    // clear screen
+  LPUART_ESC_Print("H");     // move cursor to top left
 
+  LPUART_ESC_Print("3B");           // move cursor down 3 lines
+  LPUART_ESC_Print("5C");           // move cursor right 5 spaces
+  LPUART_Print("All good students read the");
+  LPUART_ESC_Print("1B");           // move cursor down 1 line
+  LPUART_ESC_Print("21D");          // move cursor left 21 spaces
+  LPUART_ESC_Print("5m");           // blinking text on
+  LPUART_Print("Reference Manual");
+  LPUART_ESC_Print("H");            // cursor to top left
+  LPUART_ESC_Print("0m");           // remove attributes (blink off)
+  LPUART_Print("Input: ");
   /* USER CODE END 2 */
+
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    /* USER CODE END WHILE */
-	  LPUART_Print("A\r\n");
-	  for (volatile uint32_t i = 0; i < 200000; i++);
-    /* USER CODE BEGIN 3 */
+
   }
   /* USER CODE END 3 */
 }
