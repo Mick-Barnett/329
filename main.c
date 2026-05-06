@@ -28,8 +28,6 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "LPUART1.h"
-#include "delay.h"
 
 // Define flag for ISR to indicate game character position needs to be updated
 volatile bool update_pos_flag = 1;
