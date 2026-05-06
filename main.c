@@ -1,92 +1,56 @@
-/* USER CODE BEGIN Header */
-/**
-  ******************************************************************************
-  * @file           : main.c
-  * @brief          : Main program body
-  ******************************************************************************
-  * @attention
-  *
-  * Copyright (c) 2026 STMicroelectronics.
-  * All rights reserved.
-  *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
-  *
-  ******************************************************************************
-  */
-/* USER CODE END Header */
+/*
+ *******************************************************************************
+ * @file           : main.c
+ * @brief          : Main program body
+ * project         : EE 329 S'26 A7
+ * authors         : Joseph Matella & Mick Barnett
+ * version         : 0.1
+ * date            : May 4, 2026
+ * compiler        : STM32CubeIDE v.1.19.0 Build: 14980_20230301_1550 (UTC)
+ * target          : NUCLEO-L4A6ZG
+ * clocks          : 4 MHz MSI to AHB2
+ * @attention      : (c) 2026 STMicroelectronics.  All rights reserved.
+ *******************************************************************************
+ * Description: Flow control for splash screen and game rendering
+ *******************************************************************************
+ * GPIO Wiring
+ * |   Component    | GPIO Identifier | Connector Location | Config
+ *-----------------------------------------------------------------------------
+ * | N/A
+ *******************************************************************************
+ * Version History
+ *  Ver.|   Date   |  Description
+ *  ---------------------------------------------------------------------------
+ *  0.1 | 5/6/2026 | Initial flow control for game rendering
+ *******************************************************************************
+ * Header format adapted from [Code Appendix by Kevin Vo] pg 5
+ */
+
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "LPUART1.h"
 #include "delay.h"
 
-/* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
-
-/* USER CODE END Includes */
-
-/* Private typedef -----------------------------------------------------------*/
-/* USER CODE BEGIN PTD */
-
-/* USER CODE END PTD */
-
-/* Private define ------------------------------------------------------------*/
-/* USER CODE BEGIN PD */
-
-/* USER CODE END PD */
-
-/* Private macro -------------------------------------------------------------*/
-/* USER CODE BEGIN PM */
-
-/* USER CODE END PM */
-
-/* Private variables ---------------------------------------------------------*/
-
-/* USER CODE BEGIN PV */
-
-/* USER CODE END PV */
+// Define flag for ISR to indicate game character position needs to be updated
+volatile bool update_pos_flag = 1;
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
-/* USER CODE BEGIN PFP */
-/* USER CODE END PFP */
 
-/* Private user code ---------------------------------------------------------*/
-/* USER CODE BEGIN 0 */
-
-/* USER CODE END 0 */
-
-/**
-  * @brief  The application entry point.
-  * @retval int
-  */
 int main(void)
 {
-
-  /* USER CODE BEGIN 1 */
-
-  /* USER CODE END 1 */
-
-  /* MCU Configuration--------------------------------------------------------*/
-
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
-
-  /* USER CODE BEGIN Init */
-
-  /* USER CODE END Init */
 
   /* Configure the system clock */
   SystemClock_Config();
 
-  /* USER CODE BEGIN SysInit */
+  // Initialization functions
   LPUART1_init();
   SysTick_Init();
-  /* USER CODE END SysInit */
 
-  /* Initialize all configured peripherals */
-  /* USER CODE BEGIN 2 */
+  // Echo Character portion of lab
+  // Written over by game interface
   LPUART_ESC_Print("2J");    // clear screen
   LPUART_ESC_Print("H");     // move cursor to top left
 
@@ -100,16 +64,29 @@ int main(void)
   LPUART_ESC_Print("H");            // cursor to top left
   LPUART_ESC_Print("0m");           // remove attributes (blink off)
   LPUART_Print("Input: ");
-  /* USER CODE END 2 */
 
+  // Rudimentary game face portion of lab
+  LPUART_ESC_Print("2J");    // clear screen
 
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
+  // Render the splash screen
+  Render_SplashScreen();
+  // Delay 5 seconds
+  delay_us(50000000);
+  // Clear the screen
+  LPUART_ESC_Print("2J");
+  // Render the game border
+  Render_Border();
+
   while (1)
   {
-
+	  // Check if awsd has been pressed to move the game character
+	  if (update_pos_flag) {
+		  // Update the game character position based on key press
+		  Update_Character_Position();
+		  // Render the game character at the new position
+		  Render_Character();
+	  }
   }
-  /* USER CODE END 3 */
 }
 
 /**
