@@ -74,6 +74,25 @@ void LPUART_Print( const char* message ) {
    }
 }
 
+//character transmission for a string message
+void LPUART_ESC_Print( const char* command ) {
+   uint16_t iStrIdx = 0;
+   while(!(LPUART1->ISR & USART_ISR_TXE)) // wait for empty xmit buffer
+            ;
+   LPUART1->TDR = 0x1B;       // send ESC
+
+	while(!(LPUART1->ISR & USART_ISR_TXE)) // wait for empty xmit buffer
+				;
+   LPUART1->TDR = '[';       // send [
+
+   // Send comand
+   while ( command[iStrIdx] != 0 ) {
+      while(!(LPUART1->ISR & USART_ISR_TXE)) // wait for empty xmit buffer
+         ;
+      LPUART1->TDR = command[iStrIdx];       // send this character
+	   iStrIdx++;                             // advance index to next char
+   }
+}
 ////////////////////////////////////////
 //Needs to be similar to LPUART pring but include a case for esc
 //LPUART_ESC_Print(){}
@@ -86,7 +105,8 @@ void LPUART1_IRQHandler( void  ) {
       charRecv = LPUART1->RDR;
       switch ( charRecv ) {
 	   case 'R':
-            /* USER: process R to ESCape code back to terminal */
+         LPUART_Print("joe");
+			/* USER: process R to ESCape code back to terminal */
 	      break;
          /* USER : handle other ESCape code cases */
 	   default:
@@ -96,7 +116,6 @@ void LPUART1_IRQHandler( void  ) {
 	}  // end switch
    }
 }
-
 
 
 
