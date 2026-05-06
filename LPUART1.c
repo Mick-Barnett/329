@@ -170,20 +170,7 @@ void LPUART1_IRQHandler( void  ) {
    if (LPUART1->ISR & USART_ISR_RXNE) {
       charRecv = LPUART1->RDR;
       switch ( charRecv ) {
-      // Handle color change request
-	   case 'R':
-         LPUART_ESC_Print("31m"); // Change text color to red
-	      break;
-	   case 'G':
-         LPUART_ESC_Print("32m"); // Change text color to green
-	      break;
-	   case 'B':
-         LPUART_ESC_Print("34m"); // Change text color to blue
-	      break;
-	   case 'W':
-         LPUART_ESC_Print("37m"); // Change text color to white
-	      break;
-         // Handle direction key press for character movement
+      // Handle direction key press for character movement
 	   case 'a':
 			last_key = 'a';
 	   	update_pos_flag = 1;
