@@ -29,6 +29,13 @@
 
 #include "LPUART1.h"
 
+extern volatile bool update_pos_flag;
+volatile uint8_t last_key = 0;
+uint8_t char_row_pos      = ROWS / 2;
+uint8_t char_col_pos      = COLS / 2;
+uint8_t prev_char_row_pos = ROWS / 2;
+uint8_t prev_char_col_pos = COLS / 2;
+
 /* -----------------------------------------------------------------------------
  * function : LPUART1_init()
  * INs      : none
@@ -120,6 +127,38 @@ void LPUART_ESC_Print( const char* command ) {
 }
 
 /* -----------------------------------------------------------------------------
+ * function : LPUART_ESC_Print_Pos()
+ * INs      : Desired row and column position
+ * OUTs     : none
+ * action   : moves the cursor to the desired row and column positions
+ * Citation : aassisted by Claude (Anthropic), claude.ai, [5/6/2026]
+ * -------------------------------------------------------------------------- */
+void LPUART_ESC_Print_Pos(uint8_t row, uint8_t col) {
+    char buffer[12];
+    uint8_t idx = 0;
+
+    // Manually build "\033[row;colH" without sprintf or string.h
+    buffer[idx++] = '\033';
+    buffer[idx++] = '[';
+
+    // Convert row to characters
+    if (row >= 10) buffer[idx++] = '0' + (row / 10);
+    buffer[idx++] = '0' + (row % 10);
+
+    buffer[idx++] = ';';
+
+    // Convert col to characters
+    if (col >= 10) buffer[idx++] = '0' + (col / 10);
+    buffer[idx++] = '0' + (col % 10);
+
+    buffer[idx++] = 'H';
+    buffer[idx++] = '\0';
+
+    LPUART_Print(buffer);
+}
+
+
+/* -----------------------------------------------------------------------------
  * function : LPUART1_IRQHandler()
  * INs      : none
  * OUTs     : none
@@ -144,6 +183,23 @@ void LPUART1_IRQHandler( void  ) {
 	   case 'W':
          LPUART_ESC_Print("37m"); // Change text color to white
 	      break;
+         // Handle direction key press for character movement
+	   case 'a':
+			last_key = 'a';
+	   	update_pos_flag = 1;
+	   	break;
+	   case 'w':
+	   			last_key = 'w';
+	   	   	update_pos_flag = 1;
+	   	   	break;
+	   case 's':
+	   			last_key = 's';
+	   	   	update_pos_flag = 1;
+	   	   	break;
+	   case 'd':
+	   			last_key = 'd';
+	   	   	update_pos_flag = 1;
+	   	   	break;
 	   default:
 	      while( !(LPUART1->ISR & USART_ISR_TXE) )
                ;    // wait for empty TX buffer
