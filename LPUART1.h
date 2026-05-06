@@ -28,7 +28,11 @@
  * Header format adapted from [Code Appendix by Kevin Vo] pg 5
  */
 #include "stm32l4xx_hal.h"
+#include <stdio.h>
 
 void LPUART1_init(void);
 void LPUART_Print(const char* message);
 void LPUART1_IRQHandler(void);
+void LPUART_ESC_Print(const char* command);
+
+
