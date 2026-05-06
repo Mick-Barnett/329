@@ -28,6 +28,8 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32l4xx_hal.h"
+#include "LPUART1.h"
+#include "delay.h"
 
 // Typedef
 typedef int bool;
