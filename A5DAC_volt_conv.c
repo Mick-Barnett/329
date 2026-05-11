@@ -1,14 +1,13 @@
-/*
- * DAC_volt_conv.c
- *
- *  Created on: May 11, 2026
- *      Author: mickp
- */
+#include "DAC_volt_conv.h"
 
+uint16_t DAC_volt_conv(uint16_t voltage_mV) {
 
-void DAC_volt_conv(void){
+    if (voltage_mV > 3300) {
+        voltage_mV = 3300;
+    }
 
+    uint32_t temp = (uint32_t)voltage_mV * 4095;
+    temp = temp / 4096;
 
-	
-	
+    return (uint16_t)temp;
 }
