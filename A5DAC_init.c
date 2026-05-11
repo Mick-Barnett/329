@@ -4,6 +4,7 @@
  *  Created on: May 11, 2026
  *      Author: mickp
  */
+#include "DAC_init.h"
 #include "SPI_init.h"
 
 //initialize the SPI peripheral to communicate with the DAC
