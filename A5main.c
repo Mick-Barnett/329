@@ -18,7 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-
+#include "DAC_init.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -85,16 +85,22 @@ int main(void)
 
   /* Initialize all configured peripherals */
   /* USER CODE BEGIN 2 */
-
+  DAC_init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    /* USER CODE END WHILE */
+	  uint16_t dac_data;
+	  uint32_t delay;
 
-    /* USER CODE BEGIN 3 */
+	  dac_data = DAC_volt_conv(1230);   // 1.230 V test value
+	  DAC_write(dac_data);
+
+	  for (delay = 0; delay < 100000; delay++) {
+	  }
+
   }
   /* USER CODE END 3 */
 }
@@ -176,4 +182,4 @@ void assert_failed(uint8_t *file, uint32_t line)
      ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
   /* USER CODE END 6 */
 }
-#endif /* USE_FULL_ASSERT */
+#endif /* USE_FULL_ASSERT */SERT */
