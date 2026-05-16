@@ -19,7 +19,7 @@
 
  /* USER configure GPIO pins for I2C alternate functions SCL and SDA */
 // Configure I2C
-void SPI_Init(void) {
+void I2C_Init(void) {
 	RCC->APB1ENR1 |= RCC_APB1ENR1_I2C1EN; // enable I2C bus clock
 	I2C1->CR1 &= ~(I2C_CR1_PE); // put I2C into reset (release SDA, SCL)
 	I2C1->CR1 &= ~(I2C_CR1_ANFOFF); // filters: enable analog
@@ -30,7 +30,7 @@ void SPI_Init(void) {
 	I2C1->CR1 |= (I2C_CR1_PE); // enable I2C
 }
 
-void SPI_Write(void) {
+void I2C_Write(void) {
 // build EEPROM transaction
 	I2C1->CR2 &= ~(I2C_CR2_RD_WRN); // set WRITE mode
 	I2C1->CR2 &= ~(I2C_CR2_NBYTES); // clear Byte count
@@ -49,8 +49,7 @@ void SPI_Write(void) {
 }
 
 void EEPROM_Read(void) {
-	//write I2C address bytes, then EEPROM mem address bytes, 
-	//then read bit, return data 
+	// build EEPROM transaction
 	I2C1->CR2 &= ~(I2C_CR2_RD_WRN); // set WRITE mode
 	I2C1->CR2 &= ~(I2C_CR2_NBYTES); // clear Byte count
 	I2C1->CR2 |= (2 << I2C_CR2_NBYTES_Pos); // write 2 bytes (2 addr)
