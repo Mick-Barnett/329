@@ -30,7 +30,10 @@ void I2C_Init(void) {
 	I2C1->CR1 |= (I2C_CR1_PE); // enable I2C
 }
 
-void I2C_Write(void) {
+#include <I2C.h>
+#include "delay.h"
+
+void EEPROM_write(void) {
 // build EEPROM transaction
 	I2C1->CR2 &= ~(I2C_CR2_RD_WRN); // set WRITE mode
 	I2C1->CR2 &= ~(I2C_CR2_NBYTES); // clear Byte count
@@ -41,11 +44,34 @@ void I2C_Write(void) {
 	/* USER wait for I2C_ISR_TXIS to clear before writing each Byte, e.g. ... */
 	while (!(I2C1->ISR & I2C_ISR_TXIS))
 		;  // wait for start condition to transmit
-	I2C1->TXDR = (EEPROM_MEMORY_ADDR >> 8);
-	// xmit MSByte of address
+	I2C1->TXDR = (EEPROM_MEMORY_ADDR >> 8);	// xmit MSByte of address
+
 	/* address high, address low, data  -  wait at least 5 ms before READ
 	 the READ op has new NBYTES (WRITE 2 then READ 1) & new RD_WRN for 3rd Byte */
+	///////////////
+	// xmit LSByte of address
+	while (!(I2C1->ISR & I2C_ISR_TXIS));
+
+	I2C1->TXDR = (EEPROM_MEMORY_ADDR & 0xFF);
+
+	// wait before sending next byte
+	while (!(I2C1->ISR & I2C_ISR_TXIS));
+
 	I2C1->TXDR = (data); //send data
+
+	// wait until all bytes transferred
+	while (!(I2C1->ISR & I2C_ISR_TC));
+
+	// generate STOP condition
+	I2C1->CR2 |= I2C_CR2_STOP;
+
+	// wait for STOP
+	while (!(I2C1->ISR & I2C_ISR_STOPF))
+		;
+	I2C1->ICR |= I2C_ICR_STOPCF;
+
+	// EEPROM internal write cycle time - 5ms
+	delay_us(5000);
 }
 
 void EEPROM_Read(void) {
