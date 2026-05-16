@@ -55,7 +55,7 @@ void EEPROM_Read(void) {
 	I2C1->CR2 |= (2 << I2C_CR2_NBYTES_Pos); // write 2 bytes (2 addr)
 	I2C1->CR2 &= ~(I2C_CR2_SADD); // clear device address
 	I2C1->CR2 |= (EEPROM_ADDRESS << (I2C_CR2_SADD_Pos + 1)); // device addr SHL 1
-	I2C1->CR2 |= I2C_CR2_START; // start I2C read op
+	I2C1->CR2 |= I2C_CR2_START; // start I2C write op
 	/* USER wait for I2C_ISR_TXIS to clear before writing each Byte, e.g. ... */
 	while (!(I2C1->ISR & I2C_ISR_TXIS))
 		;  // wait for start condition to transmit
