@@ -48,14 +48,15 @@ void SPI_Write(void) {
 	I2C1->TXDR = (data); //send data
 }
 
-void SPI_Read(void) {
-	// build EEPROM transaction
+void EEPROM_Read(void) {
+	//write I2C address bytes, then EEPROM mem address bytes, 
+	//then read bit, return data 
 	I2C1->CR2 &= ~(I2C_CR2_RD_WRN); // set WRITE mode
 	I2C1->CR2 &= ~(I2C_CR2_NBYTES); // clear Byte count
-	I2C1->CR2 |= (3 << I2C_CR2_NBYTES_Pos); // write 3 bytes (2 addr, 1 data)
+	I2C1->CR2 |= (2 << I2C_CR2_NBYTES_Pos); // write 2 bytes (2 addr)
 	I2C1->CR2 &= ~(I2C_CR2_SADD); // clear device address
 	I2C1->CR2 |= (EEPROM_ADDRESS << (I2C_CR2_SADD_Pos + 1)); // device addr SHL 1
-	I2C1->CR2 |= I2C_CR2_START; // start I2C WRITE op
+	I2C1->CR2 |= I2C_CR2_START; // start I2C read op
 	/* USER wait for I2C_ISR_TXIS to clear before writing each Byte, e.g. ... */
 	while (!(I2C1->ISR & I2C_ISR_TXIS))
 		;  // wait for start condition to transmit
@@ -65,4 +66,3 @@ void SPI_Read(void) {
 	 the READ op has new NBYTES (WRITE 2 then READ 1) & new RD_WRN for 3rd Byte */
 	I2C1->TXDR = (data); //send data
 }
-
