@@ -74,7 +74,7 @@ void EEPROM_write(void) {
 	delay_us(5000);
 }
 
-void EEPROM_Read(void) {
+uint8_t EEPROM_Read(void) {
 	// build EEPROM transaction
 	I2C1->CR2 &= ~(I2C_CR2_RD_WRN); // set WRITE mode
 	I2C1->CR2 &= ~(I2C_CR2_NBYTES); // clear Byte count
@@ -89,5 +89,11 @@ void EEPROM_Read(void) {
 	// xmit MSByte of address
 	/* address high, address low, data  -  wait at least 5 ms before READ
 	 the READ op has new NBYTES (WRITE 2 then READ 1) & new RD_WRN for 3rd Byte */
-	I2C1->TXDR = (data); //send data
+    I2C1->CR2 |= (I2C_CR2_RD_WRN); // set read mode
+    I2C1->CR2 &= ~(I2C_CR2_NBYTES); // clear Byte count
+    I2C1->CR2 |= (1 << I2C_CR2_NBYTES_Pos); // read 1 byte of data
+    I2C1->CR2 |= I2C_CR2_START; // start I2C read op
+    while (!(I2C1->ISR & I2C_ISR_RXNE));  //wait until data is received
+    uint8_t mem_data = (I2C1->RXDR);      //read data from I2C receive buffer
+    return(mem_data);
 }
