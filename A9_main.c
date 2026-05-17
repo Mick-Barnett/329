@@ -24,10 +24,16 @@ int main(void)
 
   HAL_Init();
   SystemClock_Config();
+  I2C_init();
+
 
   while (1)
   {
-
+  //set up random number generator to create a random data byte and random address
+  //pass the randomd ata byte and random address to the write function
+  //wait 5ms, then read from same address
+  //check if the read data matches the random data
+  //turn on the on-board LED if it matches
 
   }
 
