@@ -8,7 +8,7 @@
  * date            : 2026-04-30
  * compiler        : STM32CubeIDE v.1.19.0
  * target          : NUCLEO-L4A6ZG
- * clocks          : 4 MHz MSI to AHB2
+ * clocks          : 4 MHz MSI to AHB2 & APB1
  ******************************************************************************
  */
 

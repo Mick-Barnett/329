@@ -26,7 +26,7 @@
 #define EEPROM_ADDRESS 0b1010001 //address of EEPROM Device (not memory address)
 
 uint8_t EEPROM_Read(uint16_t EEPROM_MEMORY_ADDR);
-void EEPROM_write(uint16_t EEPROM_MEMORY_ADDR);
+void EEPROM_write(uint16_t EEPROM_MEMORY_ADDR, uint8_t data);
 void I2C_Init(void);
 
 #endif /* INC_I2C_H_ */

@@ -24,7 +24,7 @@
  * function : I2C_Init();
  * INs      : none
  * OUTs     : none
- * action   : initializes I2C1 for fast speed, 4MHz APB1, 
+ * action   : initializes I2C1 for fast speed, 4MHz APB1,
  *            auto stop and 7-bit addresses
  * authors  : EE329 Lab Manual - A9 sample code
  *            Modified by Mick Barnett & Facundo Soto-Wang
@@ -46,7 +46,7 @@ void I2C_Init(void) {
  * function : EEPROM_write();
  * INs      : 2 byte memory address
  * OUTs     : none
- * action   : Sets I2C1 to write mode 
+ * action   : Sets I2C1 to write mode
  *            then writes 2 byte memory address after sending slave address
  *            followed by data byte to be stored in memory
  * authors  : EE329 Lab Manual - A9 sample code - Modified by Mick Barnett
@@ -54,7 +54,7 @@ void I2C_Init(void) {
  * date     : 260517
  * usage    : called by main.c
  *----------------------------------------------------------------------------*/
-void EEPROM_write(uint16_t EEPROM_MEMORY_ADDR) {
+void EEPROM_write(uint16_t EEPROM_MEMORY_ADDR, uint8_t data) {
 // build EEPROM transaction
 	I2C1->CR2 &= ~(I2C_CR2_RD_WRN); // set WRITE mode
 	I2C1->CR2 &= ~(I2C_CR2_NBYTES); // clear Byte count
@@ -98,7 +98,7 @@ void EEPROM_write(uint16_t EEPROM_MEMORY_ADDR) {
  * function : EEPROM_Read();
  * INs      : 2 byte memory address
  * OUTs     : data byte from memory address
- * action   : Sets I2C1 to write mode 
+ * action   : Sets I2C1 to write mode
  *            then writes 2 byte memory address after sending slave address
  *            Sets I2C1 to read mode, then reads the data from EEPROM
  *            EEPROM data byte is returned by function
