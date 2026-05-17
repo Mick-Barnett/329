@@ -54,7 +54,7 @@ void I2C_Init(void) {
  * date     : 260517
  * usage    : called by main.c
  *----------------------------------------------------------------------------*/
-void EEPROM_write(void) {
+void EEPROM_write(uint16_t EEPROM_MEMORY_ADDR) {
 // build EEPROM transaction
 	I2C1->CR2 &= ~(I2C_CR2_RD_WRN); // set WRITE mode
 	I2C1->CR2 &= ~(I2C_CR2_NBYTES); // clear Byte count
