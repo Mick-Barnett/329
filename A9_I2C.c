@@ -74,7 +74,7 @@ void EEPROM_write(void) {
 	delay_us(5000);
 }
 
-uint8_t EEPROM_Read(void) {
+uint8_t EEPROM_Read(uint16_t EEPROM_MEMORY_ADDR) {
 	// build EEPROM transaction
 	I2C1->CR2 &= ~(I2C_CR2_RD_WRN); // set WRITE mode
 	I2C1->CR2 &= ~(I2C_CR2_NBYTES); // clear Byte count
@@ -82,13 +82,11 @@ uint8_t EEPROM_Read(void) {
 	I2C1->CR2 &= ~(I2C_CR2_SADD); // clear device address
 	I2C1->CR2 |= (EEPROM_ADDRESS << (I2C_CR2_SADD_Pos + 1)); // device addr SHL 1
 	I2C1->CR2 |= I2C_CR2_START; // start I2C write op
-	/* USER wait for I2C_ISR_TXIS to clear before writing each Byte, e.g. ... */
-	while (!(I2C1->ISR & I2C_ISR_TXIS))
-		;  // wait for start condition to transmit
-	I2C1->TXDR = (EEPROM_MEMORY_ADDR >> 8);
-	// xmit MSByte of address
-	/* address high, address low, data  -  wait at least 5 ms before READ
-	 the READ op has new NBYTES (WRITE 2 then READ 1) & new RD_WRN for 3rd Byte */
+	while (!(I2C1->ISR & I2C_ISR_TXIS));// wait for start condition to transmit
+	I2C1->TXDR = (EEPROM_MEMORY_ADDR >> 8); // xmit MSByte of address
+	while (!(I2C1->ISR & I2C_ISR_TXIS)); // wait before sending next byte
+	I2C1->TXDR = (uint8_t)(EEPROM_MEMORY_ADDR & 0xFF);//xmit LSByte of address
+    while (!(I2C1->ISR & I2C_ISR_TC));  //wait for write sequence to end
     I2C1->CR2 |= (I2C_CR2_RD_WRN); // set read mode
     I2C1->CR2 &= ~(I2C_CR2_NBYTES); // clear Byte count
     I2C1->CR2 |= (1 << I2C_CR2_NBYTES_Pos); // read 1 byte of data
