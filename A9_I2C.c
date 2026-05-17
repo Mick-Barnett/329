@@ -15,10 +15,23 @@
  * WIRING
  *
  *******************************************************************************
- * Header format adapted from [Code Appendix by Kevin Vo] pg 5
+ * Header format adapted from [Code Appendix by Kevin Vo] pg 5*/
 
- /* USER configure GPIO pins for I2C alternate functions SCL and SDA */
-// Configure I2C
+#include "I2C.h"
+#include "delay.h"
+
+/*-----------------------------------------------------------------------------
+ * function : I2C_Init();
+ * INs      : none
+ * OUTs     : none
+ * action   : initializes I2C1 for fast speed, 4MHz APB1, 
+ *            auto stop and 7-bit addresses
+ * authors  : EE329 Lab Manual - A9 sample code
+ *            Modified by Mick Barnett & Facundo Soto-Wang
+ * version  : 0.1
+ * date     : 260517
+ * usage    : called by main.c
+ *----------------------------------------------------------------------------*/
 void I2C_Init(void) {
 	RCC->APB1ENR1 |= RCC_APB1ENR1_I2C1EN; // enable I2C bus clock
 	I2C1->CR1 &= ~(I2C_CR1_PE); // put I2C into reset (release SDA, SCL)
@@ -29,10 +42,18 @@ void I2C_Init(void) {
 	I2C1->CR2 &= ~(I2C_CR2_ADD10); // 7-bit address mode
 	I2C1->CR1 |= (I2C_CR1_PE); // enable I2C
 }
-
-#include <I2C.h>
-#include "delay.h"
-
+/*-----------------------------------------------------------------------------
+ * function : EEPROM_write();
+ * INs      : 2 byte memory address
+ * OUTs     : none
+ * action   : Sets I2C1 to write mode 
+ *            then writes 2 byte memory address after sending slave address
+ *            followed by data byte to be stored in memory
+ * authors  : EE329 Lab Manual - A9 sample code - Modified by Mick Barnett
+ * version  : 0.1
+ * date     : 260517
+ * usage    : called by main.c
+ *----------------------------------------------------------------------------*/
 void EEPROM_write(void) {
 // build EEPROM transaction
 	I2C1->CR2 &= ~(I2C_CR2_RD_WRN); // set WRITE mode
@@ -73,7 +94,19 @@ void EEPROM_write(void) {
 	// EEPROM internal write cycle time - 5ms
 	delay_us(5000);
 }
-
+/*-----------------------------------------------------------------------------
+ * function : EEPROM_Read();
+ * INs      : 2 byte memory address
+ * OUTs     : data byte from memory address
+ * action   : Sets I2C1 to write mode 
+ *            then writes 2 byte memory address after sending slave address
+ *            Sets I2C1 to read mode, then reads the data from EEPROM
+ *            EEPROM data byte is returned by function
+ * authors  : EE329 Lab Manual - A9 sample code - Modified by Facundo Soto-Wang
+ * version  : 0.1
+ * date     : 260517
+ * usage    : called by main.c
+ *----------------------------------------------------------------------------*/
 uint8_t EEPROM_Read(uint16_t EEPROM_MEMORY_ADDR) {
 	// build EEPROM transaction
 	I2C1->CR2 &= ~(I2C_CR2_RD_WRN); // set WRITE mode
@@ -85,6 +118,7 @@ uint8_t EEPROM_Read(uint16_t EEPROM_MEMORY_ADDR) {
 	while (!(I2C1->ISR & I2C_ISR_TXIS));// wait for start condition to transmit
 	I2C1->TXDR = (EEPROM_MEMORY_ADDR >> 8); // xmit MSByte of address
 	while (!(I2C1->ISR & I2C_ISR_TXIS)); // wait before sending next byte
+
 	I2C1->TXDR = (uint8_t)(EEPROM_MEMORY_ADDR & 0xFF);//xmit LSByte of address
     while (!(I2C1->ISR & I2C_ISR_TC));  //wait for write sequence to end
     I2C1->CR2 |= (I2C_CR2_RD_WRN); // set read mode
