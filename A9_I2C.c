@@ -122,7 +122,7 @@ uint8_t EEPROM_Read(uint16_t EEPROM_MEMORY_ADDR) {
    I2C1->CR2 |= I2C_CR2_START; // start I2C read op
 	while (!(I2C1->ISR & I2C_ISR_RXNE));  //wait until data is received
    uint8_t mem_data = (I2C1->RXDR);      //read data from I2C receive buffer
-   return(mem_data);
 	while (!(I2C1->ISR & I2C_ISR_STOPF)); // wait for AUTOEND-generated STOP
 	I2C1->ICR |= I2C_ICR_STOPCF;			  // clear STOP flag
+	return(mem_data);
 }
