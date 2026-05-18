@@ -64,3 +64,33 @@ void LED_on(void){
 void LED_off(void){
    GPIOB->BRR = LED_PIN;
 }
+
+/*-----------------------------------------------------------------------------
+ * function : PBSW_GPIO_Init();
+ * INs      : none
+ * OUTs     : none
+ * action   : configures on-board pushbutton switch as input 
+ * authors  : Facundo Soto-Wang
+ * version  : 0.1
+ * date     : 260517
+ * usage    : called by main.c
+ *----------------------------------------------------------------------------*/
+void PBSW_GPIO_Init(void){
+ RCC->AHB2ENR |= RCC_AHB2ENR_GPIOCEN;
+ GPIOC->MODER &= ~(GPIO_MODER_MODE13);
+ GPIOC->PUPDR &= ~(GPIO_PUPDR_PUPD13);
+}
+
+/*-----------------------------------------------------------------------------
+ * function : PBSW_IsPressed();
+ * INs      : none
+ * OUTs     : none
+ * action   : returns 1 if B1 Iis pressed and 0 otherwise
+ * authors  : Facundo Soto-Wang
+ * version  : 0.1
+ * date     : 260517
+ * usage    : called by main.c
+ *----------------------------------------------------------------------------*/
+int PBSW_IsPressed(void){
+ return ((PBSW_PORT->IDR >> PBSW_PIN_NUM) & 1U);
+}
