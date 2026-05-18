@@ -57,8 +57,6 @@ int main(void)
 	  {
 		  LED_off();
 	  }
-
-	  delay_us(5000);
   }
 
 }
