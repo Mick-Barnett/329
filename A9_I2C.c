@@ -33,9 +33,14 @@
  * usage    : called by main.c
  *----------------------------------------------------------------------------*/
 void I2C_Init(void) {
-	//put pin configuration up here
-	//init PB8, PB9 as alternate function 5 (I2C1)
-	UART_PORT ->AFR[1] &= ~(0x000F << GPIO_AFRL_AFSEL9_Pos);
+	//pin configuration for PB8, PB9
+	GPIOB -> MODER   &= ~(GPIO_MODER_MODE8 | GPIO_MODER_MODE9);
+	GPIOB -> MODER   |=  (GPIO_MODER_MODE8_1 | GPIO_MODER_MODE9_1);//AF MODE
+	GPIOB -> OTYPER  &= (GPIO_OTYPER_OT8 | GPIO_OTYPER_OT9);//open drain
+	GPIOB -> PUPDR   &= ~(GPIO_PUPDR_PUPD8 | GPIO_PUPDR_PUPD9); //no PUPD
+	GPIOB -> OSPEEDR |= ((3 << GPIO_OSPEEDR_OSPEED8_Pos) |
+									(3 << GPIO_OSPEEDR_OSPEED9_Pos)); //VF Speed
+										UART_PORT ->AFR[1] &= ~(0x000F << GPIO_AFRL_AFSEL9_Pos);
 	UART_PORT ->AFR[1] |=  (0x0005 << GPIO_AFRL_AFSEL9_Pos);
 	UART_PORT ->AFR[1] &= ~(0x000F << GPIO_AFRH_AFSEL8_Pos);
 	UART_PORT ->AFR[1] |=  (0x0005 << GPIO_AFRH_AFSEL8_Pos);
