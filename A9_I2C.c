@@ -33,6 +33,12 @@
  * usage    : called by main.c
  *----------------------------------------------------------------------------*/
 void I2C_Init(void) {
+	//put pin configuration up here
+	//init PB8, PB9 as alternate function 5 (I2C1)
+	UART_PORT ->AFR[1] &= ~(0x000F << GPIO_AFRL_AFSEL9_Pos);
+	UART_PORT ->AFR[1] |=  (0x0005 << GPIO_AFRL_AFSEL9_Pos);
+	UART_PORT ->AFR[1] &= ~(0x000F << GPIO_AFRH_AFSEL8_Pos);
+	UART_PORT ->AFR[1] |=  (0x0005 << GPIO_AFRH_AFSEL8_Pos);
 	RCC->APB1ENR1 |= RCC_APB1ENR1_I2C1EN; // enable I2C bus clock
 	I2C1->CR1 &= ~(I2C_CR1_PE); // put I2C into reset (release SDA, SCL)
 	I2C1->CR1 &= ~(I2C_CR1_ANFOFF); // filters: enable analog
