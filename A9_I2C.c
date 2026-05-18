@@ -80,15 +80,10 @@ void EEPROM_write(uint16_t EEPROM_MEMORY_ADDR, uint8_t data) {
 
 	I2C1->TXDR = (data); //send data
 
-	// wait until all bytes transferred
-	while (!(I2C1->ISR & I2C_ISR_TC));
+	// wait for AUTOEND-generated STOP
+	while (!(I2C1->ISR & I2C_ISR_STOPF));
 
-	// generate STOP condition
-	I2C1->CR2 |= I2C_CR2_STOP;
-
-	// wait for STOP
-	while (!(I2C1->ISR & I2C_ISR_STOPF))
-		;
+	// clear STOP flag
 	I2C1->ICR |= I2C_ICR_STOPCF;
 
 	// EEPROM internal write cycle time - 5ms
