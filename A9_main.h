@@ -15,22 +15,16 @@
 #ifndef __MAIN_H
 #define __MAIN_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-
 #include "stm32l4xx_hal.h"
 #include "I2C.h"
+
+// global test variables
+extern uint8_t random_data;
+extern uint16_t random_address;
+extern uint8_t mem_data;
 
 
 void Error_Handler(void);
 void SystemClock_Config(void);
 
-
-
-#ifdef __cplusplus
-}
 #endif
-
-#endif /* __MAIN_H */
