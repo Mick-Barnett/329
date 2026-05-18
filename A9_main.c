@@ -4,7 +4,7 @@
  * @file           : main.c
  * @brief          : UART
  * project         : EE 329 S'26 A4
- * authors         : Facundo Soto-Wang
+ * authors         : Facundo Soto-Wang Mick Barnett
  * version         : 0.1
  * date            : 2026-04-30
  * compiler        : STM32CubeIDE v.1.19.0
@@ -24,17 +24,37 @@ int main(void)
 
   HAL_Init();
   SystemClock_Config();
+  SysTick_Init();
   I2C_Init();
+  RNG_Init
+  LD2_Init();
 
+  unit8_t random_data;
+  unit16_t random_address;
+  unit8_t mem_data;
 
   while (1)
   {
-  //set up random number generator to create a random data byte and random address
-  //pass the randomd ata byte and random address to the write function
-  //wait 5ms, then read from same address
-  //check if the read data matches the random data
-  //turn on the on-board LED if it matches
 
+  //set up random number generator to create a random data byte and random address
+	  random_data = RNG_num() & 0xFF;
+	  random_address = RNG_num() & 0x7FFF;
+  //pass the random data byte and random address to the write function
+	  EEPROM_write(random_address, random_data);
+  //wait 5ms, then read from same address
+	  mem_data = EEPROM_Read(random_address);
+  //check if the read data matches the random data
+	  if (mem_data == random_data)
+	  {
+		  //turn on the on-board LED if it matches
+			  LED_on();
+	  }
+	  else
+	  {
+		  LED_off();
+	  }
+
+	  delay_us(5000);
   }
 
 }
