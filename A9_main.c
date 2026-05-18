@@ -18,6 +18,10 @@
  */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "I2C.h"
+#include "RNG.h"
+#include "delay.h"
+#include "NUCLEO.h"
 
 int main(void)
 {
