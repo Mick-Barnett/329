@@ -21,6 +21,8 @@
 #ifndef INC_NUCLEO_H_
 #define INC_NUCLEO_H_
 
+#include "stm32l4xx_hal.h"
+
 #define LED_PIN 0x80 //mask for PB7 (LD2 PIN)
 
 void LD2_Init(void);
