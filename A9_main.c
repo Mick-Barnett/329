@@ -30,22 +30,24 @@ int main(void)
   SystemClock_Config();
   SysTick_Init();
   I2C_Init();
-  RNG_Init
+  RNG_Init();
   LD2_Init();
 
-  unit8_t random_data;
-  unit16_t random_address;
-  unit8_t mem_data;
+  uint8_t random_data = 0;
+  uint16_t random_address = 0;
+  uint8_t mem_data = 0;
 
-  while (1)
-  {
 
   //set up random number generator to create a random data byte and random address
 	  random_data = RNG_num() & 0xFF;
 	  random_address = RNG_num() & 0x7FFF;
+
+  while (1)
+  {
+
   //pass the random data byte and random address to the write function
 	  EEPROM_write(random_address, random_data);
-  //wait 5ms, then read from same address
+  //read from same address
 	  mem_data = EEPROM_Read(random_address);
   //check if the read data matches the random data
 	  if (mem_data == random_data)
@@ -57,6 +59,7 @@ int main(void)
 	  {
 		  LED_off();
 	  }
+
   }
 
 }
