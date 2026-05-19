@@ -23,7 +23,7 @@
 
 #include "stm32l4xx_hal.h"
 
-#define EEPROM_ADDRESS 0b1010001 //address of EEPROM Device (not memory address)
+#define EEPROM_ADDRESS 0b1010110 //address of EEPROM Device (not memory address)
 
 uint8_t EEPROM_Read(uint16_t EEPROM_MEMORY_ADDR);
 void EEPROM_write(uint16_t EEPROM_MEMORY_ADDR, uint8_t data);
