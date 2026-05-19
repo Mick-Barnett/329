@@ -128,7 +128,8 @@ uint8_t EEPROM_Read(uint16_t EEPROM_MEMORY_ADDR) {
 	while (!(I2C1->ISR & I2C_ISR_TXIS)); // wait before sending next byte
 	I2C1->TXDR = (uint8_t)(EEPROM_MEMORY_ADDR & 0xFF);//xmit LSByte of address
 
-   while (!(I2C1->ISR & I2C_ISR_TC));  //wait for write sequence to end
+   delay_us(5000);
+	
    I2C1->CR2 |= (I2C_CR2_RD_WRN); // set read mode
    I2C1->CR2 &= ~(I2C_CR2_NBYTES); // clear Byte count
 	I2C1->CR2 |= (1 << I2C_CR2_NBYTES_Pos); // read 1 byte of data
