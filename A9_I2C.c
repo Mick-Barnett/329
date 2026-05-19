@@ -73,11 +73,13 @@ void EEPROM_write(uint16_t EEPROM_MEMORY_ADDR, uint8_t data) {
 	I2C1->CR2 |= (3 << I2C_CR2_NBYTES_Pos); // write 3 bytes (2 addr, 1 data)
 	I2C1->CR2 &= ~(I2C_CR2_SADD); // clear device address
 	I2C1->CR2 |= (EEPROM_ADDRESS << (I2C_CR2_SADD_Pos + 1)); // device addr SHL 1
+	I2C1->CR2 |= (I2C_CR2_AUTOEND); // auto send STOP after transmission-
 	I2C1->CR2 |= I2C_CR2_START; // start I2C WRITE op
 	/* USER wait for I2C_ISR_TXIS to clear before writing each Byte, e.g. ... */
+
 	while (!(I2C1->ISR & I2C_ISR_TXIS))
 		;  // wait for start condition to transmit
-	I2C1->TXDR = (EEPROM_MEMORY_ADDR >> 8);	// xmit MSByte of address
+	I2C1->TXDR = (uint8_t)(EEPROM_MEMORY_ADDR >> 8);	// xmit MSByte of address
 
 	/* address high, address low, data  -  wait at least 5 ms before READ
 	 the READ op has new NBYTES (WRITE 2 then READ 1) & new RD_WRN for 3rd Byte */
@@ -85,7 +87,7 @@ void EEPROM_write(uint16_t EEPROM_MEMORY_ADDR, uint8_t data) {
 	// xmit LSByte of address
 	while (!(I2C1->ISR & I2C_ISR_TXIS));
 
-	I2C1->TXDR = (EEPROM_MEMORY_ADDR & 0xFF);
+	I2C1->TXDR = (uint8_t)(EEPROM_MEMORY_ADDR & 0xFF);
 
 	// wait before sending next byte
 	while (!(I2C1->ISR & I2C_ISR_TXIS));
@@ -115,7 +117,8 @@ void EEPROM_write(uint16_t EEPROM_MEMORY_ADDR, uint8_t data) {
  * usage    : called by main.c
  *----------------------------------------------------------------------------*/
 uint8_t EEPROM_Read(uint16_t EEPROM_MEMORY_ADDR) {
-	// build EEPROM transaction
+	// build EEPROM transaction //no auto stop
+	I2C1->CR2 &= ~(I2C_CR2_AUTOEND); //turn off autostop
 	I2C1->CR2 &= ~(I2C_CR2_RD_WRN); // set WRITE mode
 	I2C1->CR2 &= ~(I2C_CR2_NBYTES); // clear Byte count
 	I2C1->CR2 |= (2 << I2C_CR2_NBYTES_Pos); // write 2 bytes (2 addr)
@@ -127,6 +130,9 @@ uint8_t EEPROM_Read(uint16_t EEPROM_MEMORY_ADDR) {
 	while (!(I2C1->ISR & I2C_ISR_TXIS)); // wait before sending next byte
 	I2C1->TXDR = (uint8_t)(EEPROM_MEMORY_ADDR & 0xFF);//xmit LSByte of address
    delay_us(5000);
+   while (!(I2C1->ISR & I2C_ISR_TC));
+   I2C1->CR2 |= (I2C_CR2_AUTOEND); //turn off autostop
+
    I2C1->CR2 |= (I2C_CR2_RD_WRN); // set read mode
    I2C1->CR2 &= ~(I2C_CR2_NBYTES); // clear Byte count
 	I2C1->CR2 |= (1 << I2C_CR2_NBYTES_Pos); // read 1 byte of data
