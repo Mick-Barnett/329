@@ -18,10 +18,7 @@
  */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "I2C.h"
-#include "RNG.h"
-#include "delay.h"
-#include "NUCLEO.h"
+
 
 int main(void)
 {
@@ -39,8 +36,10 @@ int main(void)
 
 
   //set up random number generator to create a random data byte and random address
-	  random_data = RNG_num() & 0xFF;
-	  random_address = RNG_num() & 0x7FFF;
+	  random_data = RNG_num();
+	  random_data &=0xFF;
+	  random_address = RNG_num();
+	  random_address &= 0x7FFF;
 
   while (1)
   {
