@@ -46,7 +46,7 @@ void I2C_Init(void) {
 	I2C1->CR1 &= ~(I2C_CR1_PE); // put I2C into reset (release SDA, SCL)
 	I2C1->CR1 &= ~(I2C_CR1_ANFOFF); // filters: enable analog
 	I2C1->CR1 &= ~(I2C_CR1_DNF); // filters: disable digital
-	I2C1->TIMINGR = 0x00100002; // 16 MHz SYSCLK timing from CubeMX
+	I2C1->TIMINGR = 0x00100002; // 4 MHz SYSCLK timing from CubeMX
 	I2C1->CR2 |= (I2C_CR2_AUTOEND); // auto send STOP after transmission
 	I2C1->CR2 &= ~(I2C_CR2_ADD10); // 7-bit address mode
 	GPIOB ->AFR[1] &= ~(0x000F << GPIO_AFRH_AFSEL9_Pos);
@@ -69,7 +69,6 @@ void I2C_Init(void) {
  *----------------------------------------------------------------------------*/
 void EEPROM_write(uint16_t EEPROM_MEMORY_ADDR, uint8_t data) {
 // build EEPROM transaction
-	I2C1->CR1 &= ~(I2C_CR1_PE); // release I2C
 	I2C1->CR2 &= ~(I2C_CR2_RD_WRN); // set WRITE mode
 	I2C1->CR2 &= ~(I2C_CR2_NBYTES); // clear Byte count
 	I2C1->CR2 |= (3 << I2C_CR2_NBYTES_Pos); // write 3 bytes (2 addr, 1 data)
@@ -128,9 +127,7 @@ uint8_t EEPROM_Read(uint16_t EEPROM_MEMORY_ADDR) {
 	I2C1->TXDR = (EEPROM_MEMORY_ADDR >> 8); // xmit MSByte of address
 	while (!(I2C1->ISR & I2C_ISR_TXIS)); // wait before sending next byte
 	I2C1->TXDR = (uint8_t)(EEPROM_MEMORY_ADDR & 0xFF);//xmit LSByte of address
-	I2C1->CR1 &= ~(I2C_CR1_PE); // release I2C
    delay_us(5000);
-	I2C1->CR1 |= (I2C_CR1_PE); // enable I2C
    I2C1->CR2 |= (I2C_CR2_RD_WRN); // set read mode
    I2C1->CR2 &= ~(I2C_CR2_NBYTES); // clear Byte count
 	I2C1->CR2 |= (1 << I2C_CR2_NBYTES_Pos); // read 1 byte of data
@@ -140,5 +137,4 @@ uint8_t EEPROM_Read(uint16_t EEPROM_MEMORY_ADDR) {
 	while (!(I2C1->ISR & I2C_ISR_STOPF)); // wait for AUTOEND-generated STOP
 	I2C1->ICR |= I2C_ICR_STOPCF;			  // clear STOP flag
 	return(mem_data);
-	I2C1->CR1 &= ~(I2C_CR1_PE); // release I2C
 }
