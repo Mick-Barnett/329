@@ -18,19 +18,19 @@
  #include "RNG.h"
 
 void RNG_Init(void)
+void RNG_Init(void)
+{
     // enable RNG peripheral clock
     RCC->AHB2ENR |= RCC_AHB2ENR_RNGEN;
-    // enable HSI48
+    // enable HSI48 oscillator (required for RNG)
     RCC->CRRCR |= RCC_CRRCR_HSI48ON;
+    // wait until ready
     while (!(RCC->CRRCR & RCC_CRRCR_HSI48RDY));
-    // select HSI48 as RNG clock source (FIXED FIELD)
-    RCC->CCIPR &= ~RCC_CCIPR_RNGSEL;
-    RCC->CCIPR |= RCC_CCIPR_RNGSEL_1;  // HSI48
-    // configure RNG
+    // enable RNG peripheral
     RNG->CR &= ~RNG_CR_IE;
-    RNG->CR &= ~RNG_CR_CED;
     RNG->CR |= RNG_CR_RNGEN;
 }
+
 
 uint32_t RNG_num(void){
 	while (!(RNG->SR & RNG_SR_DRDY));  //wait for data to be ready
