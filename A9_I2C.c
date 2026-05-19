@@ -41,18 +41,19 @@ void I2C_Init(void) {
 	GPIOB -> PUPDR   &= ~(GPIO_PUPDR_PUPD8 | GPIO_PUPDR_PUPD9); //no PUPD
 	GPIOB -> OSPEEDR |= ((3 << GPIO_OSPEEDR_OSPEED8_Pos) |
 								(3 << GPIO_OSPEEDR_OSPEED9_Pos)); //VF Speed
+
 	RCC->APB1ENR1 |= RCC_APB1ENR1_I2C1EN; // enable I2C bus clock
 	I2C1->CR1 &= ~(I2C_CR1_PE); // put I2C into reset (release SDA, SCL)
 	I2C1->CR1 &= ~(I2C_CR1_ANFOFF); // filters: enable analog
 	I2C1->CR1 &= ~(I2C_CR1_DNF); // filters: disable digital
-	I2C1->TIMINGR = 0x00303D5B; // 16 MHz SYSCLK timing from CubeMX
+	I2C1->TIMINGR = 0x00100002; // 16 MHz SYSCLK timing from CubeMX
 	I2C1->CR2 |= (I2C_CR2_AUTOEND); // auto send STOP after transmission
 	I2C1->CR2 &= ~(I2C_CR2_ADD10); // 7-bit address mode
 	I2C1->CR1 |= (I2C_CR1_PE); // enable I2C
 	GPIOB ->AFR[1] &= ~(0x000F << GPIO_AFRH_AFSEL9_Pos);
-	GPIOB ->AFR[1] |=  (0x0005 << GPIO_AFRH_AFSEL9_Pos);
+	GPIOB ->AFR[1] |=  (0x0004 << GPIO_AFRH_AFSEL9_Pos);
 	GPIOB ->AFR[1] &= ~(0x000F << GPIO_AFRH_AFSEL8_Pos);
-	GPIOB ->AFR[1] |=  (0x0005 << GPIO_AFRH_AFSEL8_Pos);
+	GPIOB ->AFR[1] |=  (0x0004 << GPIO_AFRH_AFSEL8_Pos);
 }
 /*-----------------------------------------------------------------------------
  * function : EEPROM_write();
