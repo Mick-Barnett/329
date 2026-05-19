@@ -17,25 +17,19 @@
 
  #include "RNG.h"
 
-void RNG_Init(void){
-	RCC->AHB2ENR |= RCC_AHB2ENR_RNGEN; //pass AHB2 to RNG
-
-    // enable HSI48 oscillator
-    RCC->CRRCR |= RCC_CRRCR_HSI48ON;
-    // wait for HSI48 ready
-    while (!(RCC->CRRCR & RCC_CRRCR_HSI48RDY));
-    // select HSI48 as RNG clock source
-    RCC->CCIPR &= ~RCC_CCIPR_CLK48SEL;
-    RCC->CCIPR |= RCC_CCIPR_CLK48SEL_0;
+void RNG_Init(void)
     // enable RNG peripheral clock
     RCC->AHB2ENR |= RCC_AHB2ENR_RNGEN;
-    // enable RNG
-    RNG->CR &= ~RNG_CR_CED;   // keep clock error detection enabled
-    RNG->CR &= ~RNG_CR_IE;    // disable interrupts
-    RNG->CR |= RNG_CR_RNGEN;  // enable RNG
-	//RNG->CR |= RNG_CR_CED;  			  //disable clock error detection
-	RNG->CR &= ~RNG_CR_IE;  			  //disable RNG interrupts
-	RNG->CR |= RNG_CR_RNGEN;           //enable RNG
+    // enable HSI48
+    RCC->CRRCR |= RCC_CRRCR_HSI48ON;
+    while (!(RCC->CRRCR & RCC_CRRCR_HSI48RDY));
+    // select HSI48 as RNG clock source (FIXED FIELD)
+    RCC->CCIPR &= ~RCC_CCIPR_RNGSEL;
+    RCC->CCIPR |= RCC_CCIPR_RNGSEL_1;  // HSI48
+    // configure RNG
+    RNG->CR &= ~RNG_CR_IE;
+    RNG->CR &= ~RNG_CR_CED;
+    RNG->CR |= RNG_CR_RNGEN;
 }
 
 uint32_t RNG_num(void){
