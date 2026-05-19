@@ -17,6 +17,10 @@
 
 #include "stm32l4xx_hal.h"
 #include "I2C.h"
+#include "delay.h"
+#include "RNG.h"
+#include "NUCLEO.h"
+
 
 // global test variables
 extern uint8_t random_data;
