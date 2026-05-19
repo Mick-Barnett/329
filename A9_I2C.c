@@ -40,7 +40,7 @@ void I2C_Init(void) {
 	GPIOB -> PUPDR   &= ~(GPIO_PUPDR_PUPD8 | GPIO_PUPDR_PUPD9); //no PUPD
 	GPIOB -> OSPEEDR |= ((3 << GPIO_OSPEEDR_OSPEED8_Pos) |
 									(3 << GPIO_OSPEEDR_OSPEED9_Pos)); //VF Speed
-										UART_PORT ->AFR[1] &= ~(0x000F << GPIO_AFRL_AFSEL9_Pos);
+	GPIOB ->AFR[1] &= ~(0x000F << GPIO_AFRL_AFSEL9_Pos);
 	GPIOB ->AFR[1] |=  (0x0005 << GPIO_AFRL_AFSEL9_Pos);
 	GPIOB ->AFR[1] &= ~(0x000F << GPIO_AFRH_AFSEL8_Pos);
 	GPIOB ->AFR[1] |=  (0x0005 << GPIO_AFRH_AFSEL8_Pos);
