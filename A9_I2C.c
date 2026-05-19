@@ -33,6 +33,7 @@
  * usage    : called by main.c
  *----------------------------------------------------------------------------*/
 void I2C_Init(void) {
+	RCC->AHB2ENR |= RCC_AHB2ENR_GPIOBEN;
 	//pin configuration for PB8, PB9
 	GPIOB -> MODER   &= ~(GPIO_MODER_MODE8 | GPIO_MODER_MODE9);
 	GPIOB -> MODER   |=  (GPIO_MODER_MODE8_1 | GPIO_MODER_MODE9_1);//AF MODE
