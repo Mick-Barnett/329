@@ -36,14 +36,10 @@ void I2C_Init(void) {
 	//pin configuration for PB8, PB9
 	GPIOB -> MODER   &= ~(GPIO_MODER_MODE8 | GPIO_MODER_MODE9);
 	GPIOB -> MODER   |=  (GPIO_MODER_MODE8_1 | GPIO_MODER_MODE9_1);//AF MODE
-	GPIOB -> OTYPER  &= (GPIO_OTYPER_OT8 | GPIO_OTYPER_OT9);//open drain
+	GPIOB -> OTYPER  |= (GPIO_OTYPER_OT8 | GPIO_OTYPER_OT9);//open drain
 	GPIOB -> PUPDR   &= ~(GPIO_PUPDR_PUPD8 | GPIO_PUPDR_PUPD9); //no PUPD
 	GPIOB -> OSPEEDR |= ((3 << GPIO_OSPEEDR_OSPEED8_Pos) |
-									(3 << GPIO_OSPEEDR_OSPEED9_Pos)); //VF Speed
-	GPIOB ->AFR[1] &= ~(0x000F << GPIO_AFRH_AFSEL9_Pos);
-	GPIOB ->AFR[1] |=  (0x0005 << GPIO_AFRH_AFSEL9_Pos);
-	GPIOB ->AFR[1] &= ~(0x000F << GPIO_AFRH_AFSEL8_Pos);
-	GPIOB ->AFR[1] |=  (0x0005 << GPIO_AFRH_AFSEL8_Pos);
+								(3 << GPIO_OSPEEDR_OSPEED9_Pos)); //VF Speed
 	RCC->APB1ENR1 |= RCC_APB1ENR1_I2C1EN; // enable I2C bus clock
 	I2C1->CR1 &= ~(I2C_CR1_PE); // put I2C into reset (release SDA, SCL)
 	I2C1->CR1 &= ~(I2C_CR1_ANFOFF); // filters: enable analog
@@ -52,6 +48,10 @@ void I2C_Init(void) {
 	I2C1->CR2 |= (I2C_CR2_AUTOEND); // auto send STOP after transmission
 	I2C1->CR2 &= ~(I2C_CR2_ADD10); // 7-bit address mode
 	I2C1->CR1 |= (I2C_CR1_PE); // enable I2C
+	GPIOB ->AFR[1] &= ~(0x000F << GPIO_AFRH_AFSEL9_Pos);
+	GPIOB ->AFR[1] |=  (0x0005 << GPIO_AFRH_AFSEL9_Pos);
+	GPIOB ->AFR[1] &= ~(0x000F << GPIO_AFRH_AFSEL8_Pos);
+	GPIOB ->AFR[1] |=  (0x0005 << GPIO_AFRH_AFSEL8_Pos);
 }
 /*-----------------------------------------------------------------------------
  * function : EEPROM_write();
