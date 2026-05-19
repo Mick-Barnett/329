@@ -49,11 +49,11 @@ void I2C_Init(void) {
 	I2C1->TIMINGR = 0x00100002; // 16 MHz SYSCLK timing from CubeMX
 	I2C1->CR2 |= (I2C_CR2_AUTOEND); // auto send STOP after transmission
 	I2C1->CR2 &= ~(I2C_CR2_ADD10); // 7-bit address mode
-	I2C1->CR1 |= (I2C_CR1_PE); // enable I2C
 	GPIOB ->AFR[1] &= ~(0x000F << GPIO_AFRH_AFSEL9_Pos);
 	GPIOB ->AFR[1] |=  (0x0004 << GPIO_AFRH_AFSEL9_Pos);
 	GPIOB ->AFR[1] &= ~(0x000F << GPIO_AFRH_AFSEL8_Pos);
 	GPIOB ->AFR[1] |=  (0x0004 << GPIO_AFRH_AFSEL8_Pos);
+	I2C1->CR1 |= (I2C_CR1_PE); // enable I2C
 }
 /*-----------------------------------------------------------------------------
  * function : EEPROM_write();
