@@ -17,7 +17,7 @@
 
  #include "RNG.h"
 
-void RNG_Init(void)
+void RNG_Init(void);
 void RNG_Init(void)
 {
     // enable RNG peripheral clock
