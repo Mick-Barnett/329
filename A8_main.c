@@ -18,7 +18,6 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "ADC.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -31,7 +30,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define NUM_SAMPLES 20
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -42,14 +41,8 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-volatile uint16_t ADC_result = 0;
-volatile uint8_t ADC_ready = 0;
-
 uint16_t samples[NUM_SAMPLES];
 uint8_t sample_index = 0;
-uint16_t adc_min = 0;
-uint16_t adc_max = 0;
-uint32_t adc_avg = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -60,7 +53,42 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+/* -----------------------------------------------------------------------------
+* function : PBSW_init()
+* INs/OUTs : none
+* action   : Configures GPIO (PC13) for pushbutton
+*            - Enables GPIOC clock
+*            - Sets PC13 as input (no pull-up/pull-down)
+* authors  : Tyler Ragasa
+* -------------------------------------------------------------------------- */
+void PBSW_init(void)
+{
+   RCC->AHB2ENR |= RCC_AHB2ENR_GPIOCEN;	// Enable GPIOC clk
+   PBSW_PORT->PUPDR &= ~(GPIO_PUPDR_PUPD13);	// No PUPD
+   PBSW_PORT->MODER &= ~(GPIO_MODER_MODE13);	// Input mode
+}
+/* -----------------------------------------------------------------------------
+* function : PBSW_is_pressed()
+* INs      : none    OUTs: pressed = 1, released = 0.
+* action   : Helper function for PBSW input. Active-low.
+* authors  : Tyler Ragasa
+* -------------------------------------------------------------------------- */
+int PBSW_is_pressed(void) {return !(PBSW_PORT->IDR & PBSW_PIN);}
+/* -----------------------------------------------------------------------------
+* function : Relay_init()
+* INs/OUTs : none
+* action   : Configures GPIO (PC0) as output to drive relay 
+* authors  : Tyler Ragasa
+* -------------------------------------------------------------------------- */
+void Relay_init(void) 
+{
+	RCC->AHB2ENR |= RCC_AHB2ENR_GPIOCEN;				// Enable GPIOC clk
+   RELAY_PORT->OTYPER &= ~GPIO_OTYPER_OT0;			// push-pull
+   RELAY_PORT->OSPEEDR &= ~GPIO_OSPEEDR_OSPEED0;	// low speed
+   RELAY_PORT->PUPDR &= ~GPIO_PUPDR_PUPD0;			// no pull
+	RELAY_PORT->MODER &= ~GPIO_MODER_MODE0;			// clear mode
+   RELAY_PORT->MODER |=  (GPIO_MODER_MODE0_0);		// output mode
+}
 /* USER CODE END 0 */
 
 /**
@@ -91,6 +119,8 @@ int main(void) {
 
 	/* Initialize all configured peripherals */
 	/* USER CODE BEGIN 2 */
+	PBSW_init();
+	Relay_init();
 	ADC_init();
 	/* USER CODE END 2 */
 
@@ -98,18 +128,26 @@ int main(void) {
 	/* USER CODE BEGIN WHILE */
 	while (1) {
 		/* USER CODE END WHILE */
+		// While PBSW pressed -> relay ON
+		if (PBSW_is_pressed()) {
+			RELAY_PORT->ODR |= RELAY_PIN;	// relay ON
+		}
+		else {
+			RELAY_PORT->ODR &= ~RELAY_PIN;	// relay OFF
+		}
+		
 		if (ADC_ready) {
-			adc_ready = 0;
+			ADC_ready = 0;
 
 			samples[sample_index] = ADC_result;
 			sample_index++;
 
 			if (sample_index >= NUM_SAMPLES) {
-				Process_ADC_Samples(samples, NUM_SAMPLES);
-				sample_inex = 0;
+				Process_ADC_samples(samples, NUM_SAMPLES);
+				sample_index = 0;
 			}
 
-			ADC1->CR |= ADC_CR_ADSTART; //being next conversion
+			ADC1->CR |= ADC_CR_ADSTART; //begin next conversion
 		}
 		/* USER CODE BEGIN 3 */
 	}
@@ -137,7 +175,7 @@ void SystemClock_Config(void) {
 	RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_MSI;
 	RCC_OscInitStruct.MSIState = RCC_MSI_ON;
 	RCC_OscInitStruct.MSICalibrationValue = 0;
-	RCC_OscInitStruct.MSIClockRange = RCC_MSIRANGE_6;
+	RCC_OscInitStruct.MSIClockRange = RCC_MSIRANGE_9;
 	RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
 	if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK) {
 		Error_Handler();
@@ -152,7 +190,7 @@ void SystemClock_Config(void) {
 	RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
 	RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
-	if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK) {
+	if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK) {
 		Error_Handler();
 	}
 }

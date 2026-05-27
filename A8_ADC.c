@@ -5,10 +5,12 @@
  *      Author: mickp
  */
 #include "ADC.h"
-#include "main.h"
 
 volatile uint16_t ADC_result = 0;
 volatile uint8_t ADC_ready = 0;
+uint16_t adc_min = 0;
+uint16_t adc_max = 0;
+uint32_t adc_avg = 0;
 
 void ADC_init(void) {
 //run the ADC with a clock of at least 24Mhz
@@ -37,7 +39,7 @@ void ADC_init(void) {
 	ADC1->ISR |= (ADC_ISR_ADRDY);              // set to clr ADC Ready flag
 	// configure ADC sampling & sequencing
 	ADC1->SQR1 |= (5 << ADC_SQR1_SQ1_Pos);    // sequence = 1 conv., ch 5
-	ADC1->SMPR1 |= (1 << ADC_SMPR1_SMP5_Pos);  // ch 5 sample time = 6.5 clocks
+	ADC1->SMPR1 |= (SAMPLE_TIME << ADC_SMPR1_SMP5_Pos);  // ch 5 sample time
 	ADC1->CFGR &= ~( ADC_CFGR_CONT |         // single conversion mode
 			ADC_CFGR_EXTEN |         // h/w trig disabled for s/w trig
 			ADC_CFGR_RES);        // 12-bit resolution
@@ -71,6 +73,7 @@ void Process_ADC_samples(uint16_t array[], uint8_t length) {
 	adc_max = array[0];
 
 	for (uint8_t i = 0; i < length; i++) {
+		// Parse through 
 		if (array[i] < adc_min) {
 			adc_min = array[i];
 		}
@@ -81,3 +84,4 @@ void Process_ADC_samples(uint16_t array[], uint8_t length) {
 	}
 	adc_avg = sum / length;
 }
+

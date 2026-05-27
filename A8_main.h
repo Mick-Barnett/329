@@ -30,18 +30,17 @@ extern "C" {
 #include "ADC.h"
 
 #define NUM_SAMPLES 20
-
-
-// global test variables
-extern volatile uint16_t ADC_result;
-extern volatile uint8_t ADC_ready;
+#define RELAY_PORT GPIOC
+#define RELAY_PIN GPIO_PIN_0
+#define PBSW_PORT GPIOC
+#define PBSW_PIN GPIO_PIN_13
 
 extern uint16_t samples[NUM_SAMPLES];
-extern uint8_t sample_index = 0;
-extern uint16_t adc_min = 0;
-extern uint16_t adc_max = 0;
-extern uint32_t adc_avg = 0;
+extern uint8_t sample_index;
 
+void PBSW_init(void);
+int PBSW_is_pressed(void);
+void Relay_init(void);
 
 void Error_Handler(void);
 void SystemClock_Config(void);
