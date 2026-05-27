@@ -6,11 +6,20 @@
  */
 #include "ADC.h"
 
+// Initialize ADC parameters
 volatile uint16_t ADC_result = 0;
 volatile uint8_t ADC_ready = 0;
-uint16_t adc_min = 0;
-uint16_t adc_max = 0;
-uint32_t adc_avg = 0;
+uint16_t adc_min_count = 0;
+uint16_t adc_max_count = 0;
+uint16_t adc_avg_count = 0;
+uint16_t adc_min_mV = 0;
+uint16_t adc_max_mV = 0;
+uint16_t adc_avg_mV = 0;
+// Calibration Constants
+#define CAL_SLOPE_NUM 12000UL
+#define CAL_SLOPE_DEN 10000UL
+#define CAL_OFFSET 0UL
+
 
 void ADC_init(void) {
 //run the ADC with a clock of at least 24Mhz
@@ -66,22 +75,31 @@ void ADC1_2_IRQHandler(void) {
 	}
 }
 
+uint16_t ADC_count_to_mV(uint16_t count) {
+	if(count<=CAL_OFFSET) return 0;
+	uint32_t mV = (((uint32_t)count - CAL_OFFSET)*CAL_SLOPE_DEN)/CAL_SLOPE_NUM;
+	return (uint16_t)mV;
+}
+
 void Process_ADC_samples(uint16_t array[], uint8_t length) {
 	uint32_t sum = 0;
 
-	adc_min = array[0];
-	adc_max = array[0];
+	adc_min_count = array[0];
+	adc_max_count = array[0];
 
 	for (uint8_t i = 0; i < length; i++) {
 		// Parse through 
-		if (array[i] < adc_min) {
-			adc_min = array[i];
+		if (array[i] < adc_min_count) {
+			adc_min_count = array[i];
 		}
-		if (array[i] > adc_max) {
-			adc_max = array[i];
+		if (array[i] > adc_max_count) {
+			adc_max_count = array[i];
 		}
 		sum += array[i];
 	}
-	adc_avg = sum / length;
+	adc_avg_count = (uint16_t)(sum / length);
+	adc_min_mV = ADC_count_to_mV(adc_min_count);
+	adc_max_mV = ADC_count_to_mV(adc_max_count);
+	adc_avg_mV = ADC_count_to_mV(adc_avg_count);
 }
 

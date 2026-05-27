@@ -144,11 +144,14 @@ int main(void) {
 
 			if (sample_index >= NUM_SAMPLES) {
 				Process_ADC_samples(samples, NUM_SAMPLES);
+				// LPUART print
 				sample_index = 0;
 			}
 
 			ADC1->CR |= ADC_CR_ADSTART; //begin next conversion
 		}
+
+
 		/* USER CODE BEGIN 3 */
 	}
 	/* USER CODE END 3 */
