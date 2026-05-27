@@ -3,10 +3,22 @@
   ******************************************************************************
   * @file           : main.h
   * @brief          : Header for main.c file.
+  *                   This file contains the common defines of the application.
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2026 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
   ******************************************************************************
   */
 /* USER CODE END Header */
 
+/* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __MAIN_H
 #define __MAIN_H
 
@@ -18,20 +30,54 @@ extern "C" {
 #include "ADC.h"
 
 #define NUM_SAMPLES 20
-
-// Global test variables
-extern volatile uint16_t ADC_result;
-extern volatile uint8_t ADC_ready;
+#define RELAY_PORT GPIOC
+#define RELAY_PIN GPIO_PIN_0
+#define PBSW_PORT GPIOC
+#define PBSW_PIN GPIO_PIN_13
 
 extern uint16_t samples[NUM_SAMPLES];
 extern uint8_t sample_index;
-extern uint16_t adc_min;
-extern uint16_t adc_max;
-extern uint32_t adc_avg;
+
+void PBSW_init(void);
+int PBSW_is_pressed(void);
+void Relay_init(void);
+
+void Error_Handler(void);
+void SystemClock_Config(void);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* __MAIN_H *//* USER CODE END Includes */
+
+/* Exported types ------------------------------------------------------------*/
+/* USER CODE BEGIN ET */
+
+/* USER CODE END ET */
+
+/* Exported constants --------------------------------------------------------*/
+/* USER CODE BEGIN EC */
+
+/* USER CODE END EC */
+
+/* Exported macro ------------------------------------------------------------*/
+/* USER CODE BEGIN EM */
+
+/* USER CODE END EM */
 
 /* Exported functions prototypes ---------------------------------------------*/
 void Error_Handler(void);
-void SystemClock_Config(void);
+
+/* USER CODE BEGIN EFP */
+
+/* USER CODE END EFP */
+
+/* Private defines -----------------------------------------------------------*/
+
+/* USER CODE BEGIN Private defines */
+
+/* USER CODE END Private defines */
 
 #ifdef __cplusplus
 }
