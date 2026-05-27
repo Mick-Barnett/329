@@ -41,8 +41,16 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+/* USER CODE BEGIN PV */
+volatile uint16_t ADC_result = 0;
+volatile uint8_t ADC_ready = 0;
+
 uint16_t samples[NUM_SAMPLES];
 uint8_t sample_index = 0;
+uint16_t adc_min = 0;
+uint16_t adc_max = 0;
+uint32_t adc_avg = 0;
+/* USER CODE END PV */
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
