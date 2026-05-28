@@ -1,8 +1,22 @@
 /*
- * ADC.h
+ *******************************************************************************
+ * EE 329 A9 I2C & EEPROM
+ *******************************************************************************
+ * @file           : ADC.h
+ * @brief          : header file for ADC.c
+ * project         : EE 329 S'26 A5
+ * authors         : Tyler Ragasa, Mick Barnett, Alan Odnoblyudov
+ * version         : 0.1
+ * date            : 5/26/26
+ * compiler        : STM32CubeIDE v.1.19.0 Build: 14980_20230301_1550 (UTC)
+ * target          : NUCLEO-L4A6ZG
+ * clocks          : 4 MHz MSI to AHB2
+ * @attention      : (c) 2026 STMicroelectronics.  All rights reserved.
+ * WIRING
  *
- *  Created on: May 26, 2026
- *      Author: mickp
+ *
+ *******************************************************************************
+ * Header format adapted from [Code Appendix by Kevin Vo] pg 5
  */
 
 #ifndef INC_ADC_H_
