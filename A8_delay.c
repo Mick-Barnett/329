@@ -2,13 +2,13 @@
  *******************************************************************************
  * @file           : delay.c
  * @brief          : keypad configuration functions and keypress detection functions
- * project         : EE 329 S'26 A7
+ * project         : EE 329 S'26 A8
  * authors         : Mick Barnett and Tyler Ragasa
  * version         : 0.1
  * date            : 20260421
  * compiler        : STM32CubeIDE v.1.19.0 Build: 14980_20230301_1550 (UTC)
  * target          : NUCLEO-L4A6ZG
- * clocks          : 4 MHz MSI to AHB2
+ * clocks          : 24 MHz MSI
  * @attention      : (c) 2026 STMicroelectronics.  All rights reserved.
  *******************************************************************************
  * Description: Handles input of timer set point along with timer count down.
@@ -36,7 +36,6 @@ void SysTick_Init(void) {
 // delay in microseconds using SysTick timer to count CPU clock cycles
 // do not call with 0 : error, maximum delay.
 // careful calling with small nums : results in longer delays than specified:
-//	   e.g. @4MHz, delay_us(1) = 10-15 us delay.
 void delay_us(const uint32_t time_us) {
 	// set the counts for the specified delay
 	SysTick->LOAD = (uint32_t)((time_us * (SystemCoreClock / 1000000)) - 1);
