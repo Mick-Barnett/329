@@ -16,9 +16,9 @@ uint16_t adc_min_mV = 0;
 uint16_t adc_max_mV = 0;
 uint16_t adc_avg_mV = 0;
 // Calibration Constants
-#define CAL_SLOPE_NUM 12000UL
+#define CAL_SLOPE_NUM 12341UL
 #define CAL_SLOPE_DEN 10000UL
-#define CAL_OFFSET 0UL
+#define CAL_OFFSET 6UL
 
 
 void ADC_init(void) {
@@ -88,7 +88,7 @@ void Process_ADC_samples(uint16_t array[], uint8_t length) {
 	adc_max_count = array[0];
 
 	for (uint8_t i = 0; i < length; i++) {
-		// Parse through 
+		// Parse through
 		if (array[i] < adc_min_count) {
 			adc_min_count = array[i];
 		}
@@ -102,4 +102,3 @@ void Process_ADC_samples(uint16_t array[], uint8_t length) {
 	adc_max_mV = ADC_count_to_mV(adc_max_count);
 	adc_avg_mV = ADC_count_to_mV(adc_avg_count);
 }
-
