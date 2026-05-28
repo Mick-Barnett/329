@@ -77,10 +77,10 @@ int PBSW_is_pressed(void) {return !(PBSW_PORT->IDR & PBSW_PIN);}
 /* -----------------------------------------------------------------------------
 * function : Relay_init()
 * INs/OUTs : none
-* action   : Configures GPIO (PC0) as output to drive relay 
+* action   : Configures GPIO (PC0) as output to drive relay
 * authors  : Tyler Ragasa
 * -------------------------------------------------------------------------- */
-void Relay_init(void) 
+void Relay_init(void)
 {
 	RCC->AHB2ENR |= RCC_AHB2ENR_GPIOCEN;				// Enable GPIOC clk
    RELAY_PORT->OTYPER &= ~GPIO_OTYPER_OT0;			// push-pull
@@ -130,12 +130,13 @@ int main(void) {
 		/* USER CODE END WHILE */
 		// While PBSW pressed -> relay ON
 		if (PBSW_is_pressed()) {
-			RELAY_PORT->ODR |= RELAY_PIN;	// relay ON
+			RELAY_PORT->ODR &= ~RELAY_PIN;	// relay OFF
+
 		}
 		else {
-			RELAY_PORT->ODR &= ~RELAY_PIN;	// relay OFF
+			RELAY_PORT->ODR |= RELAY_PIN;	// relay ON
 		}
-		
+
 		if (ADC_ready) {
 			ADC_ready = 0;
 
@@ -144,14 +145,11 @@ int main(void) {
 
 			if (sample_index >= NUM_SAMPLES) {
 				Process_ADC_samples(samples, NUM_SAMPLES);
-				// LPUART print
 				sample_index = 0;
 			}
 
 			ADC1->CR |= ADC_CR_ADSTART; //begin next conversion
 		}
-
-
 		/* USER CODE BEGIN 3 */
 	}
 	/* USER CODE END 3 */
