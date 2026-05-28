@@ -1,22 +1,23 @@
-/* USER CODE BEGIN Header */
-/**
-  ******************************************************************************
-  * @file           : main.h
-  * @brief          : Header for main.c file.
-  *                   This file contains the common defines of the application.
-  ******************************************************************************
-  * @attention
-  *
-  * Copyright (c) 2026 STMicroelectronics.
-  * All rights reserved.
-  *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
-  *
-  ******************************************************************************
-  */
-/* USER CODE END Header */
+/*
+ *******************************************************************************
+ * EE 329 A9 I2C & EEPROM
+ *******************************************************************************
+ * @file           : main.h
+ * @brief          : header file for main.c
+ * project         : EE 329 S'26 A5
+ * authors         : Tyler Ragasa, Mick Barnett, Alan Odnoblyudov
+ * version         : 0.1
+ * date            : 5/26/26
+ * compiler        : STM32CubeIDE v.1.19.0 Build: 14980_20230301_1550 (UTC)
+ * target          : NUCLEO-L4A6ZG
+ * clocks          : 4 MHz MSI to AHB2
+ * @attention      : (c) 2026 STMicroelectronics.  All rights reserved.
+ * WIRING
+ *
+ *
+ *******************************************************************************
+ * Header format adapted from [Code Appendix by Kevin Vo] pg 5
+ */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __MAIN_H
